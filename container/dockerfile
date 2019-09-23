@@ -1,34 +1,13 @@
-FROM ubuntu:14.04
+FROM openjdk:jdk-slim
 
-RUN \
-  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
-  apt-get update && \
-  apt-get -y upgrade && \
-  apt-get install -y build-essential && \
-  apt-get install -y software-properties-common && \
-  apt-get install -y byobu curl git htop man unzip vim wget && \
-  rm -rf /var/lib/apt/lists/*
-
-#JAVA
-RUN \
-  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-  add-apt-repository -y ppa:webupd8team/java && \
-  apt-get update && \
-  apt-get install -y oracle-java8-installer && \
- rm -rf /var/lib/apt/lists/* && \
- rm -rf /var/cache/oracle-jdk8-installer
-
-# Define working directory.
-WORKDIR /data
-
-# Define commonly used JAVA_HOME variable
-ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+RUN apt-get update
+RUN apt-get -y install curl wget
 
 # SPARK
-ARG SPARK_ARCHIVE=http://d3kbcqa49mib13.cloudfront.net/spark-2.1.0-bin-hadoop2.7.tgz
+ARG SPARK_ARCHIVE=https://www.apache.org/dyn/closer.lua/spark/spark-2.4.4/spark-2.4.4-bin-hadoop2.7.tgz
 RUN curl -s $SPARK_ARCHIVE | tar -xz -C /usr/local/
 
-ENV SPARK_HOME /usr/local/spark-2.1.0-bin-hadoop2.7
+ENV SPARK_HOME /usr/local/spark-2.4.4-bin-hadoop2.7
 ENV PATH $PATH:$SPARK_HOME/bin
 
 WORKDIR $SPARK_HOME
