@@ -1,0 +1,1 @@
+docker build -t sallen/learnspark:2.4.3 .

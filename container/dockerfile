@@ -1,13 +1,12 @@
-FROM openjdk:jdk-slim
+FROM alpine:3.10
 
-RUN apt-get update
-RUN apt-get -y install curl wget
+ENV SPARK_VERSION=2.4.3
+ENV HADOOP_VERSION=2.7
 
-# SPARK
-ARG SPARK_ARCHIVE=https://www.apache.org/dyn/closer.lua/spark/spark-2.4.4/spark-2.4.4-bin-hadoop2.7.tgz
-RUN curl -s $SPARK_ARCHIVE | tar -xz -C /usr/local/
-
-ENV SPARK_HOME /usr/local/spark-2.4.4-bin-hadoop2.7
-ENV PATH $PATH:$SPARK_HOME/bin
-
-WORKDIR $SPARK_HOME
+RUN apk add --no-cache curl bash openjdk8-jre python3 py-pip nss libc6-compat \
+      && ln -s /lib64/ld-linux-x86-64.so.2 /lib/ld-linux-x86-64.so.2 \
+      && wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
+      && tar -xvzf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
+      && mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} spark \
+      && rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
+      && cd /
